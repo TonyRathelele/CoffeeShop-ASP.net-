@@ -1,0 +1,18 @@
+Coffee Product Images Placeholder
+
+For a production coffee website, you would place the following images here:
+
+1. ethiopian-yirgacheffe.jpg - Light roast single origin coffee
+2. italian-espresso.jpg - Dark roast espresso blend
+3. colombian-supremo.jpg - Medium roast Colombian coffee
+4. cold-brew.jpg - Cold brew concentrate
+5. swiss-decaf.jpg - Decaffeinated coffee
+
+These images should be high-quality product photos showing:
+- Coffee beans in attractive packaging
+- Consistent lighting and background
+- Professional product photography
+- Optimized for web (compressed but high quality)
+- Recommended size: 400x400px minimum
+
+For now, the application uses placeholder URLs from Unsplash for demonstration.
