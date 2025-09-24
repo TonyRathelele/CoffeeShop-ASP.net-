@@ -1,0 +1,117 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Home - Coffee Haven";
+}
+
+<!-- Hero Section -->
+<section class="hero-section bg-primary text-white py-5 mb-5" style="background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);">
+    <div class="container text-center">
+        <h1 class="display-3 fw-bold mb-3">WAKE UP & SMELL THE COFFEE</h1>
+        <p class="lead mb-4">Premium coffee beans from around the world, roasted to perfection and delivered fresh to your door.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a asp-controller="Product" asp-action="Index" class="btn btn-light btn-lg px-4">Shop Now</a>
+            <a href="#featured" class="btn btn-outline-light btn-lg px-4">Learn More</a>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+@if (ViewBag.Categories != null)
+{
+    <section class="container mb-5">
+        <h2 class="text-center mb-4">Shop by Category</h2>
+        <div class="row g-4">
+            @foreach (var category in (List<Category>)ViewBag.Categories)
+            {
+                <div class="col-md-6 col-lg-3">
+                    <a asp-controller="Product" asp-action="Index" asp-route-categoryId="@category.Id" class="text-decoration-none">
+                        <div class="card h-100 border-0 shadow-sm category-card">
+                            <div class="card-body text-center p-4">
+                                <i class="fas fa-coffee fa-3x text-primary mb-3"></i>
+                                <h5 class="card-title">@category.Name</h5>
+                                <p class="card-text text-muted">@category.Description</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+<!-- Featured Products Section -->
+<section id="featured" class="container mb-5">
+    <h2 class="text-center mb-4">Featured Products</h2>
+    <div class="row g-4">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var product in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm product-card">
+                        <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" style="height: 250px; object-fit: cover;" />
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p class="card-text text-muted flex-grow-1">@product.Description</p>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="h5 text-primary mb-0">@product.Price.ToString("C")</span>
+                                <small class="text-muted">@product.Origin</small>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="btn btn-outline-primary flex-grow-1">View Details</a>
+                                <form asp-controller="Product" asp-action="AddToCart" method="post" class="d-inline">
+                                    <input type="hidden" name="productId" value="@product.Id" />
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-cart-plus"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center">
+                <p class="lead">No products available yet. Please check back soon!</p>
+            </div>
+        }
+    </div>
+    <div class="text-center mt-4">
+        <a asp-controller="Product" asp-action="Index" class="btn btn-outline-primary btn-lg">View All Products</a>
+    </div>
+</section>
+
+<!-- Featured Categories -->
+<section class="container my-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <img src="https://images.unsplash.com/photo-1733416222240-f4e1959914c5?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8SGFuZGNyYWZ0ZWQlMjBlc3ByZXNzbyUyQyUyMGNhcHB1Y2Npbm8lMkMlMjBhbmQlMjBtb3JlLiUyMFRhc3RlJTIwdGhlJTIwZGlmZmVyZW5jZS58ZW58MHx8MHx8fDA%3D" class="card-img-top" alt="Fresh Coffee">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Signature Brews</h5>
+                    <p class="card-text">Handcrafted espresso, cappuccino, and more. Taste the difference.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <img src="https://images.unsplash.com/photo-1733256530195-005ec6bef903?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Q3JvaXNzYW50cyUyQyUyMG11ZmZpbnMlMkMlMjBhbmQlMjBzd2VldCUyMHRyZWF0cyUyMGJha2VkJTIwZGFpbHklMjBpbiUyMGhvdXNlfGVufDB8fDB8fHww" class="card-img-top" alt="Pastries">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Fresh Pastries</h5>
+                    <p class="card-text">Croissants, muffins, and sweet treats baked daily in-house.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <img src="https://plus.unsplash.com/premium_photo-1737058526881-9af3e54e4538?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8UmVsYXglMkMlMjB3b3JrJTJDJTIwb3IlMjBjYXRjaCUyMHVwJTIwd2l0aCUyMGZyaWVuZHMlMjBpbiUyMG91ciUyMHdhcm0lMkMlMjBpbnZpdGluZyUyMHNwYWNlJTIwJTIwZWF0aW5nfGVufDB8fDB8fHww" class="card-img-top" alt="Cozy Ambiance">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Cozy Ambiance</h5>
+                    <p class="card-text">Relax, work, or catch up with friends in our warm, inviting space.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

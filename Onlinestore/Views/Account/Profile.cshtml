@@ -1,0 +1,12 @@
+@model ApplicationUser
+@{
+    ViewData["Title"] = "Profile";
+}
+<h2>Your Profile</h2>
+<div class="card" style="max-width: 400px;">
+    <div class="card-body">
+        <p><strong>Username:</strong> @Model.UserName</p>
+        <p><strong>Email:</strong> @Model.Email</p>
+        <a asp-action="ChangePassword" class="btn btn-primary">Change Password</a>
+    </div>
+</div> 

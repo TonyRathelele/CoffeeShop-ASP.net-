@@ -1,0 +1,43 @@
+@model IEnumerable<Order>
+@{
+    ViewData["Title"] = "Order History";
+}
+<h2>Your Order History</h2>
+@if (!Model.Any())
+{
+    <p>You have not placed any orders yet.</p>
+}
+else
+{
+    foreach (var order in Model)
+    {
+        <div class="card mb-4">
+            <div class="card-header">
+                <strong>Order #@order.Id</strong> - @order.OrderDate.ToString("g") - Total: <strong>@order.TotalAmount.ToString("C")</strong>
+            </div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in order.Items)
+                    {
+                        <tr>
+                            <td>@item.Product.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Price.ToString("C")</td>
+                            <td>@(item.Price * item.Quantity).ToString("C")</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+} 

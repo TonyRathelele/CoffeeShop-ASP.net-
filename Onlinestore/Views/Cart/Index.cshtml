@@ -1,0 +1,111 @@
+@model ShoppingCart
+@{
+    ViewData["Title"] = "Shopping Cart - Coffee Haven";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="mb-4">
+                <i class="fas fa-shopping-cart me-2"></i>Your Cart
+            </h1>
+
+            @if (Model.Items.Any())
+            {
+                @foreach (var item in Model.Items)
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <img src="@item.ImageUrl" alt="@item.ProductName" class="img-fluid rounded" style="height: 80px; object-fit: cover;" />
+                                </div>
+                                <div class="col-md-4">
+                                    <h5 class="mb-1">@item.ProductName</h5>
+                                    <p class="text-muted mb-0">@item.Price.ToString("C") each</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <form asp-action="UpdateQuantity" method="post" class="d-flex align-items-center">
+                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                        <label class="form-label me-2 mb-0">Qty:</label>
+                                        <input type="number" name="quantity" value="@item.Quantity" min="1" max="10" 
+                                               class="form-control form-control-sm me-2" style="width: 70px;" 
+                                               onchange="this.form.submit()" />
+                                    </form>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <h6 class="mb-1">@((item.Price * item.Quantity).ToString("C"))</h6>
+                                </div>
+                                <div class="col-md-1 text-end">
+                                    <form asp-action="Remove" method="post" class="d-inline">
+                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                        <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                                onclick="return confirm('Remove this item from cart?')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                    <h3>Your cart is empty</h3>
+                    <p class="text-muted">Add some delicious coffee to get started!</p>
+                    <a asp-controller="Product" asp-action="Index" class="btn btn-primary">
+                        <i class="fas fa-coffee me-2"></i>Shop Now
+                    </a>
+                </div>
+            }
+        </div>
+
+        @if (Model.Items.Any())
+        {
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Items (@Model.ItemCount)</span>
+                            <span>@Model.Total.ToString("C")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Shipping</span>
+                            <span class="text-success">FREE</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <strong>Total</strong>
+                            <strong class="text-primary">@Model.Total.ToString("C")</strong>
+                        </div>
+                        
+                        <form asp-action="Checkout" method="post">
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mb-2">
+                                <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                            </button>
+                        </form>
+                        
+                        <a asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Security badges -->
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        <i class="fas fa-lock me-1"></i>Secure checkout
+                        <br>
+                        <i class="fas fa-truck me-1"></i>Free shipping on all orders
+                    </small>
+                </div>
+            </div>
+        }
+    </div>
+</div> 

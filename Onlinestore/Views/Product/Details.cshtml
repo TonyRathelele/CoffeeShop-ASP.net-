@@ -1,0 +1,168 @@
+@model Product
+@{
+    ViewData["Title"] = Model.Name + " - Coffee Haven";
+    var reviews = ViewBag.Reviews as List<Review> ?? new List<Review>();
+    var averageRating = ViewBag.AverageRating as double? ?? 0;
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Product" asp-action="Index">Shop</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Product" asp-action="Index" asp-route-categoryId="@Model.CategoryId">@Model.Category.Name</a></li>
+            <li class="breadcrumb-item active">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-6">
+            <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded shadow" />
+        </div>
+        <div class="col-md-6">
+            <h1 class="mb-3">@Model.Name</h1>
+            
+            @if (reviews.Any())
+            {
+                <div class="mb-3">
+                    <div class="d-flex align-items-center">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="fas fa-star @(i <= averageRating ? "text-warning" : "text-muted")"></i>
+                        }
+                        <span class="ms-2">(@reviews.Count reviews)</span>
+                    </div>
+                </div>
+            }
+
+            <p class="lead">@Model.Description</p>
+            
+            <div class="row mb-4">
+                <div class="col-sm-6">
+                    <h6 class="text-muted">Origin</h6>
+                    <p>@Model.Origin</p>
+                </div>
+                <div class="col-sm-6">
+                    <h6 class="text-muted">Roast Level</h6>
+                    <p>@Model.RoastLevel</p>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.FlavorNotes))
+            {
+                <div class="mb-4">
+                    <h6 class="text-muted">Flavor Notes</h6>
+                    <p><i class="fas fa-leaf text-success me-2"></i>@Model.FlavorNotes</p>
+                </div>
+            }
+
+            <div class="mb-4">
+                <h3 class="text-primary">@Model.Price.ToString("C")</h3>
+                @if (!Model.IsAvailable || Model.StockQuantity <= 0)
+                {
+                    <span class="badge bg-danger">Out of Stock</span>
+                }
+                else if (Model.StockQuantity < 10)
+                {
+                    <span class="badge bg-warning">Only @Model.StockQuantity left!</span>
+                }
+                else
+                {
+                    <span class="badge bg-success">In Stock</span>
+                }
+            </div>
+
+            @if (Model.IsAvailable && Model.StockQuantity > 0)
+            {
+                <form asp-action="AddToCart" method="post" class="mb-4">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <div class="row align-items-end">
+                        <div class="col-auto">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" name="quantity" value="1" min="1" max="@Model.StockQuantity" class="form-control" style="width: 80px;" />
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            }
+
+            <div class="d-flex gap-2">
+                <a asp-controller="Product" asp-action="Index" asp-route-categoryId="@Model.CategoryId" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to @Model.Category.Name
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3>Customer Reviews</h3>
+            
+            @if (User.Identity?.IsAuthenticated ?? false)
+            {
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5>Write a Review</h5>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="AddReview" method="post">
+                            <input type="hidden" name="productId" value="@Model.Id" />
+                            <div class="mb-3">
+                                <label class="form-label">Rating</label>
+                                <select name="rating" class="form-select" required>
+                                    <option value="">Select a rating</option>
+                                    <option value="5">5 Stars - Excellent</option>
+                                    <option value="4">4 Stars - Very Good</option>
+                                    <option value="3">3 Stars - Good</option>
+                                    <option value="2">2 Stars - Fair</option>
+                                    <option value="1">1 Star - Poor</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Comment</label>
+                                <textarea name="comment" class="form-control" rows="3" placeholder="Share your thoughts about this product..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit Review</button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            @if (reviews.Any())
+            {
+                @foreach (var review in reviews)
+                {
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="mb-1">@review.User.UserName</h6>
+                                    <div class="mb-2">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            <i class="fas fa-star @(i <= review.Rating ? "text-warning" : "text-muted")"></i>
+                                        }
+                                    </div>
+                                </div>
+                                <small class="text-muted">@review.CreatedAt.ToString("MMM dd, yyyy")</small>
+                            </div>
+                            @if (!string.IsNullOrEmpty(review.Comment))
+                            {
+                                <p class="mb-0">@review.Comment</p>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted">No reviews yet. Be the first to review this product!</p>
+            }
+        </div>
+    </div>
+</div> 

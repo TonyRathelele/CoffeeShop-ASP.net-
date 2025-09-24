@@ -1,0 +1,29 @@
+@model Order
+@{
+    ViewData["Title"] = "Order Confirmation";
+}
+<h2>Thank you for your order!</h2>
+<p>Your order has been placed successfully. Here are your order details:</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Items)
+    {
+        <tr>
+            <td>@item.Product.Name</td>
+            <td>@item.Quantity</td>
+            <td>@item.Price.ToString("C")</td>
+            <td>@(item.Price * item.Quantity).ToString("C")</td>
+        </tr>
+    }
+    </tbody>
+</table>
+<h4>Total: @Model.TotalAmount.ToString("C")</h4>
+<a href="/" class="btn btn-primary">Back to Home</a> 
